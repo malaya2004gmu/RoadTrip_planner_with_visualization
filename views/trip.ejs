@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Your Trip</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Plan Your Trip</h1>
+
+        <form action="/plan-trip" method="POST">
+            <div class="mb-4">
+                <label for="start">Start Location</label>
+                <select name="start" id="start" required class="w-full mt-1 p-2 border border-gray-300 rounded">
+                    <% locations.forEach(loc => { %>
+                        <option value="<%= loc %>"><%= loc %></option>
+                    <% }) %>
+                </select>
+            </div>
+        
+            <div class="mb-4">
+                <label for="end">End Location</label>
+                <select name="end" id="end" required class="w-full mt-1 p-2 border border-gray-300 rounded">
+                    <% locations.forEach(loc => { %>
+                        <option value="<%= loc %>"><%= loc %></option>
+                    <% }) %>
+                </select>
+            </div>
+        
+            <div class="mb-4">
+                <label for="round-trip" class="inline-flex items-center">
+                    <input type="checkbox" name="roundTrip" id="round-trip" class="mr-2">
+                    Round Trip
+                </label>
+            </div>
+        
+            <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
+                Plan Trip
+            </button>
+        </form>
+        
+        <% if (result) { %>
+            <% if (result.path.length === 0) { %>
+                <p style="color: red;">No route found between <%= result.start %> and <%= result.end %>.</p>
+            <% } else { %>
+                <h2>Route: <%= result.path.join(' → ') %></h2>
+                <p>Total Distance: <%= result.distance %> km</p>
+            <% } %>
+        <% } %>
+        
+
+        <div class="back-link">
+            <a href="/">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

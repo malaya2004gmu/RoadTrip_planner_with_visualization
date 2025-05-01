@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locations</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Locations</h1>
+
+        <form action="/locations" method="POST" class="bg-white p-6 rounded shadow-md">
+            <div class="mb-4">
+                <input 
+                  type="text" 
+                  name="name" 
+                  placeholder="Enter city name" 
+                  required 
+                  class="input-field"
+                />
+            </div>
+            <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
+                Add Location
+            </button>
+        </form>
+
+        <ul class="mt-6 grid grid-cols-1 gap-4">
+            <% locations.forEach(loc => { %>
+                <li class="card">
+                    <%= loc %>
+                </li>
+            <% }) %>
+        </ul>
+
+        <div class="mt-6 text-center">
+            <a href="/" class="text-green-500 hover:underline">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
