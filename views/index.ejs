@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Road Trip Planner</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
     <h1>Road Trip Planner</h1>
-
+    <% if (session.user) { %>
+    <p>Welcome, <%= session.user.username %>! <a href="/logout">Logout</a></p>
+    <% } else { %>
+    <p><a href="/login">Login</a> to use the planner.</p>
+    <% } %>
     <div class="card-container">
-        <div class="card">
-            <a href="/locations">Add/View Locations</a>
-        </div>
-        <div class="card">
-            <a href="/routes">Add/View Routes</a>
-        </div>
-        <div class="card">
-            <a href="/plan-trip">Plan a Trip</a>
-        </div>
+      <div class="index-card">
+        <a href="/locations">Add/View Locations</a>
+      </div>
+      <div class="index-card">
+        <a href="/routes">Add/View Routes</a>
+      </div>
+      <div class="index-card">
+        <a href="/plan-trip">Plan a Trip</a>
+      </div>
     </div>
     <%- include('plannedTrips', { plannedTrips: plannedTrips }) %>
 
     <a href="/map">🗺️ View Map</a>
-</body>
+  </body>
 </html>

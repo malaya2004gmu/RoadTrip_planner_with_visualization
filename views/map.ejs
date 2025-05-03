@@ -8,8 +8,20 @@
   </head>
   <body>
     <h1>City Map</h1>
+    <br />
     <a href="/">⬅️ Back to Home</a>
+    <br />
+
     <svg width="800" height="600" style="border: 1px solid #ccc"></svg>
+    <button id="calculate-path" style="margin-top: 20px">
+      Calculate Shortest Path
+    </button>
+
+    <!-- Add a section to display path details -->
+    <div
+      id="path-details"
+      style="margin-top: 20px; font-family: Arial, sans-serif"
+    ></div>
 
     <script>
       const graphData = {
@@ -60,6 +72,72 @@
         .attr("fill", "#007bff")
         .call(drag(simulation));
 
+      // For selecting two nodes
+      let selectedNodes = [];
+      node.on("click", (event, d) => {
+        if (selectedNodes.length < 2) {
+          selectedNodes.push(d.id);
+          d3.select(event.currentTarget).attr("fill", "orange");
+        }
+      });
+
+      // Add event listener to the button
+      document.getElementById("calculate-path").addEventListener("click", () => {
+        if (selectedNodes.length === 2) {
+          const [start, end] = selectedNodes;
+
+          // Make a GET request to your backend
+          fetch(`/shortest-path?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`)
+            .then(res => res.json())
+            .then(data => {
+              console.log('Shortest path result:', data);
+
+              if (data.path.length === 0) {
+                alert("No path found between these nodes.");
+              } else {
+                // Highlight path links
+                link
+                  .attr("stroke", d => {
+                    return isInBackendPath(d, data.path) ? "red" : "#999";
+                  })
+                  .attr("stroke-width", d => (isInBackendPath(d, data.path) ? 4 : 2));
+
+                // Display path details
+                const pathDetails = document.getElementById("path-details");
+                pathDetails.innerHTML = `
+                  <h3>Shortest Path</h3>
+                  <p><strong>From:</strong> ${data.start}</p>
+                  <p><strong>To:</strong> ${data.end}</p>
+                  <p><strong>Path:</strong> ${data.path.join(" → ")}</p>
+                  <p><strong>Distance:</strong> ${data.distance} km</p>
+                `;
+              }
+
+              // Reset after selection
+              setTimeout(() => {
+                node.attr("fill", "#007bff");
+                link.attr("stroke", "#999").attr("stroke-width", 2);
+                selectedNodes = [];
+              }, 4000);
+            });
+        } else {
+          alert("Please select exactly two nodes.");
+        }
+      });
+
+      // Helper function to check if a link is part of the shortest path
+      function isInBackendPath(link, path) {
+        for (let i = 0; i < path.length - 1; i++) {
+          if (
+            (link.source.id === path[i] && link.target.id === path[i + 1]) ||
+            (link.source.id === path[i + 1] && link.target.id === path[i])
+          ) {
+            return true;
+          }
+        }
+        return false;
+      }
+
       // Node labels
       const text = container.append("g")
         .selectAll("text")
@@ -100,23 +178,6 @@
         linkText
           .attr("x", d => (d.source.x + d.target.x) / 2)
           .attr("y", d => (d.source.y + d.target.y) / 2);
-      });
-
-      // Auto-center & zoom after layout finishes
-      simulation.on("end", () => {
-        const bounds = container.node().getBBox();
-        const fullWidth = width;
-        const fullHeight = height;
-        const midX = (bounds.x + bounds.width) / 2;
-        const midY = (bounds.y + bounds.height) / 2;
-        const scale = 0.85 / Math.max(bounds.width / fullWidth, bounds.height / fullHeight);
-        const translate = [
-          fullWidth / 2 - scale * midX,
-          fullHeight / 2 - scale * midY
-        ];
-
-        svg.transition().duration(750)
-          .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
       });
 
       // Drag behavior helper

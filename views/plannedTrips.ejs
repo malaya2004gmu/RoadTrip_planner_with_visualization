@@ -1,15 +1,15 @@
 <div class="planned-trips">
   <h2>Planned Trips</h2>
   <% if (plannedTrips && plannedTrips.length > 0) { %>
-      <ul class="trip-list">
-          <% plannedTrips.forEach(trip => { %>
-              <li class="trip-item">
-                  <strong>Route:</strong> <%= trip.path.join(' → ') %> <br>
-                  <strong>Distance:</strong> <%= trip.distance %> km
-              </li>
-          <% }) %>
-      </ul>
+  <ul class="trip-list">
+    <% plannedTrips.forEach(trip => { if(trip.distance <10000) {%>
+    <li class="trip-item">
+      <strong>Route:</strong> <%= trip.path.join(' → ') %> <br />
+      <strong>Distance:</strong> <%= trip.distance %> km
+    </li>
+    <%} }) %>
+  </ul>
   <% } else { %>
-      <p>No trips planned yet.</p>
+  <p>No trips planned yet.</p>
   <% } %>
 </div>

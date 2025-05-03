@@ -5,7 +5,7 @@ let routes = [];
 
 // Function to render the home page
 function renderHomePage(req, res) {
-    res.render('index', { plannedTrips });
+    res.render('index', { plannedTrips,session: req.session});
 }
 
 // Function to render the locations page
@@ -24,17 +24,33 @@ function addLocation(req, res) {
 
 // Function to render the routes page
 function renderRoutesPage(req, res) {
+
     res.render('routes', { locations, routes });
 }
 
 // Function to handle adding a route
 function addRoute(req, res) {
     const { from, to, distance } = req.body;
+
+    // Check if a route already exists between the two nodes (in either direction)
+    const routeExists = routes.some(route => 
+        (route.from === from && route.to === to) || 
+        (route.from === to && route.to === from)
+    );
+
+    if (routeExists) {
+        console.log("Route already exists between these nodes");
+        return res.redirect('/routes');
+    }
+
+    // Add the route if it doesn't already exist
     if (from && to && distance) {
         routes.push({ from, to, distance: parseFloat(distance) });
     }
+
     res.redirect('/routes');
 }
+
 
 // Function to render the trip planning page
 function renderTripPage(req, res) {
@@ -57,17 +73,19 @@ function planTrip(req, res) {
     res.render('trip', { locations, result });
 }
 
-// Function to render the map page
-function renderMapPage(req, res) {
-    res.render('map', { locations, routes });
-}
+
 
 // Dijkstra's algorithm function
 function dijkstra(start, end, locations, routes) {
     const distances = {};
     const prev = {};
     const pq = [];
-
+    const cur_routes=[];
+    for (let i = 0; i < routes.length; i++) {
+        const route = routes[i];
+        cur_routes.push({ from: route.from, to: route.to, distance: route.distance });
+        cur_routes.push({ from: route.to, to: route.from, distance: route.distance });
+    }
     locations.forEach(loc => {
         distances[loc] = Infinity;
         prev[loc] = null;
@@ -79,7 +97,7 @@ function dijkstra(start, end, locations, routes) {
         pq.sort((a, b) => a.dist - b.dist);
         const { loc } = pq.shift();
 
-        routes
+        cur_routes
             .filter(r => r.from === loc)
             .forEach(r => {
                 const alt = distances[loc] + r.distance;
@@ -103,8 +121,32 @@ function dijkstra(start, end, locations, routes) {
         end,
         distance: distances[end],
         path: distances[end] === Infinity ? [] : path
-    };
+    }; 
 }
+
+// Function to render the map page
+function renderMapPage(req, res) {
+     console.log("Rendering map page");
+    res.render('map', { locations, routes });
+}
+
+
+    function calculateShortestPath(req, res) {
+        const start = req.query.start;
+        const end = req.query.end;
+        console.log("Start:", start);
+        console.log("End:", end);
+        console.log("Locations:", locations);
+        console.log("Routes:", routes);
+    
+        if (!start || !end) {
+            return res.status(400).json({ error: 'Start and end are required' });
+        }
+    
+        const result = dijkstra(start, end, locations, routes);
+        console.log("Result:", result);
+        res.json(result);
+    }
 
 // Export all functions
 module.exports = {
@@ -116,5 +158,5 @@ module.exports = {
     renderTripPage,
     planTrip,
     renderMapPage,
-    dijkstra
+    calculateShortestPath
 };
