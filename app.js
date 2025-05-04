@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path');
-const {renderHomePage, renderLocationsPage, renderRoutesPage, renderTripPage, renderMapPage,addLocation,addRoute,planTrip,calculateShortestPath} = require('./controllers/graph_controer.js');
+const {renderHomePage, renderLocationsPage, renderRoutesPage, renderTripPage, renderMapPage,addLocation,addRoute,planTrip,calculateShortestPath,deleteLocation,deleteRoutes} = require('./controllers/graph_controer.js');
 const {renderLogin,handleLogin,handleLogout,ensureAuthenticated,handleRegister,handleRegisterPost} = require('./controllers/user_controler.js');
 const app = express();
 
@@ -31,8 +31,8 @@ app.get('/plan-trip', ensureAuthenticated,renderTripPage);
 app.post('/plan-trip', ensureAuthenticated,planTrip);
 app.get('/map', ensureAuthenticated,renderMapPage);
 app.get('/shortest-path',ensureAuthenticated,calculateShortestPath);
-
-
+app.post('/locations/delete', deleteLocation);
+app.post('/routes/delete',deleteRoutes);
 // Start server
 const PORT = 3000;
 app.listen(PORT, () => {

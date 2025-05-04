@@ -12,15 +12,9 @@
       <% if (error) { %>
       <p class="error"><%= error %></p>
       <% } %>
-      <form
-        action="/login"
-        method="POST"
-        class="bg-white p-6 rounded shadow-md"
-      >
+      <form action="/login" method="POST" class="main-form">
         <div class="mb-4">
-          <label for="username" class="block text-sm font-medium text-gray-700"
-            >Username</label
-          >
+          <label for="username" class="">Username</label>
           <input
             type="text"
             name="username"
@@ -30,9 +24,7 @@
           />
         </div>
         <div class="mb-4">
-          <label for="password" class="block text-sm font-medium text-gray-700"
-            >Password</label
-          >
+          <label for="password" class="">Password</label>
           <input
             type="password"
             name="password"
@@ -44,12 +36,7 @@
         <br />
         <a href="/register">don't have an account ? signup</a>
         <br />
-        <button
-          type="submit"
-          class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-        >
-          Login
-        </button>
+        <button type="submit" class="submit-button">Login</button>
       </form>
     </div>
   </body>

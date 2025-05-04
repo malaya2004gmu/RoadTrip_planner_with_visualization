@@ -5,28 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Routes</title>
     <link rel="stylesheet" href="/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
   </head>
   <body>
     <div class="container">
-      <h1>Routes</h1>
+      <h1>ALL-ROUTES</h1>
 
-      <form
-        action="/routes"
-        method="POST"
-        class="bg-white p-6 rounded shadow-md"
-      >
+      <form action="/routes" method="POST" class="main-form">
         <div class="mb-4">
-          <label
-            for="from-select"
-            class="block text-sm font-medium text-gray-700"
-            >From</label
-          >
-          <select
-            name="from"
-            id="from-select"
-            required
-            class="dropdown w-full mt-1 p-2 border border-gray-300 rounded"
-          >
+          <label for="from-select" class="">From</label>
+          <select name="from" id="from-select" required class="dropdown">
             <% locations.forEach(loc => { %>
             <option value="<%= loc %>"><%= loc %></option>
             <% }) %>
@@ -34,52 +25,50 @@
         </div>
 
         <div class="mb-4">
-          <label for="to-select" class="block text-sm font-medium text-gray-700"
-            >To</label
-          >
-          <select
-            name="to"
-            id="to-select"
-            required
-            class="dropdown w-full mt-1 p-2 border border-gray-300 rounded"
-          >
+          <label for="to-select" class="">To</label>
+          <select name="to" id="to-select" required class="dropdown">
             <% locations.forEach(loc => { %>
             <option value="<%= loc %>"><%= loc %></option>
             <% }) %>
           </select>
         </div>
 
-        <div class="mb-4">
-          <label for="distance" class="block text-sm font-medium text-gray-700"
-            >Distance (km)</label
-          >
+        <div class="">
+          <label for="distance" class="">Distance (km)</label>
           <input
             type="number"
             name="distance"
             id="distance-input"
             placeholder="Distance (km)"
             required
-            class="distance-input w-full mt-1 p-2 border border-gray-300 rounded"
+            class="distance-input"
           />
         </div>
 
-        <button
-          type="submit"
-          class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-        >
-          Add Route
-        </button>
+        <button type="submit" class="submit-button">Add Route</button>
       </form>
 
       <ul class="locations-list">
         <% routes.forEach(route => { %>
-        <li class="card">
+        <li class="location-item">
           <%= route.from %> ↔ <%= route.to %> : <%= route.distance %> km
+          <form action="routes/delete" method="POST">
+            <input type="hidden" name="from" value="<%= route.from %>" />
+            <input type="hidden" name="to" value="<%= route.to %>" />
+            <input
+              type="hidden"
+              name="distance"
+              value="<%= route.distance %>"
+            />
+            <button type="submit" class="delete-button" title="Delete Route">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </form>
         </li>
         <% }) %>
       </ul>
 
-      <div class="mt-15 text-center">
+      <div class="">
         <a href="/">Back to Home</a>
       </div>
     </div>

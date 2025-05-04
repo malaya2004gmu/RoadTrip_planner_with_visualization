@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Locations</title>
     <link rel="stylesheet" href="/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
   </head>
   <body>
     <div class="container">
       <h1>Locations</h1>
 
-      <form
-        action="/locations"
-        method="POST"
-        class="bg-white p-6 rounded shadow-md"
-      >
-        <div class="mb-4">
+      <form action="/locations" method="POST" class="main-form">
+        <div class="form-group">
           <input
             type="text"
             name="name"
@@ -24,22 +24,26 @@
             class="input-field"
           />
         </div>
-        <button
-          type="submit"
-          class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-        >
-          Add Location
-        </button>
+        <button type="submit" class="submit-button">Add Location</button>
       </form>
 
       <ul class="locations-list">
         <% locations.forEach(loc => { %>
-        <li class="card"><%= loc %></li>
+        <li class="location-item">
+          <span class="location-name"><%= loc %></span>
+          <form action="/locations/delete" method="POST" class="">
+            <input type="hidden" name="name" value="<%= loc %>" />
+            <button type="submit" class="delete-button" title="Delete Location">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </form>
+        </li>
+
         <% }) %>
       </ul>
 
-      <div class="mt-6 text-center">
-        <a href="/" class="text-green-500 hover:underline">Back to Home</a>
+      <div class="back-link">
+        <a href="/" class="back-button">Back to Home</a>
       </div>
     </div>
   </body>
