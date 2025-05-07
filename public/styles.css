@@ -263,6 +263,7 @@ a:hover {
 }
 
 .delete-button {
+  display: flex;
   background-color: transparent;
   color: rgb(160, 66, 66);
   border: none;

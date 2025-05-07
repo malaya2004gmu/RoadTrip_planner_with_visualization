@@ -15,7 +15,7 @@
           <label for="start">Start Location</label>
           <select name="start" id="start" required class="">
             <% locations.forEach(loc => { %>
-            <option value="<%= loc %>"><%= loc %></option>
+            <option value="<%= loc.name %>"><%= loc.name %></option>
             <% }) %>
           </select>
         </div>
@@ -24,7 +24,7 @@
           <label for="end">End Location</label>
           <select name="end" id="end" required class="">
             <% locations.forEach(loc => { %>
-            <option value="<%= loc %>"><%= loc %></option>
+            <option value="<%= loc.name %>"><%= loc.name %></option>
             <% }) %>
           </select>
         </div>

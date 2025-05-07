@@ -1,40 +1,48 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const path = require('path');
-const {renderHomePage, renderLocationsPage, renderRoutesPage, renderTripPage, renderMapPage,addLocation,addRoute,planTrip,calculateShortestPath,deleteLocation,deleteRoutes} = require('./controllers/graph_controer.js');
-const {renderLogin,handleLogin,handleLogout,ensureAuthenticated,handleRegister,handleRegisterPost} = require('./controllers/user_controler.js');
+const express = require("express");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const mongoose = require("mongoose");
+const path = require("path");
+
+const authRoutes = require("./routes/auth_routes");
+const locationRoutes = require("./routes/location_routes");
+const routeRoutes = require("./routes/route_routes");
+const generalRoutes = require("./routes/general_routes");
+
+const DB_PATH =
+  "mongodb+srv://malayasahu2004:Malaya@cluster1.5gsuy.mongodb.net/roadTripPlanner";
+
 const app = express();
 
-app.use(session({
-    secret: 'road_trip_planer', // Replace with a secure key
+app.use(
+  session({
+    secret: "road_trip_planner",
     resave: false,
-    saveUninitialized: false
-}));
-app.set('view engine', 'ejs');
+    saveUninitialized: false,
+  })
+);
+app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static("public"));
 
+// Use route handlers
+app.use(authRoutes);
+app.use(locationRoutes);
+app.use(routeRoutes);
+app.use(generalRoutes);
 
-app.get('/register',handleRegister);
-app.post('/register',handleRegisterPost);
-app.get('/login',renderLogin);
-app.post('/login',handleLogin);
-
-app.get('/logout',handleLogout);
-app.get('/', renderHomePage);
-app.get('/locations',ensureAuthenticated, renderLocationsPage);
-app.post('/locations', ensureAuthenticated,addLocation);
-app.get('/routes', ensureAuthenticated,renderRoutesPage);
-app.post('/routes', ensureAuthenticated,addRoute);
-app.get('/plan-trip', ensureAuthenticated,renderTripPage);
-app.post('/plan-trip', ensureAuthenticated,planTrip);
-app.get('/map', ensureAuthenticated,renderMapPage);
-app.get('/shortest-path',ensureAuthenticated,calculateShortestPath);
-app.post('/locations/delete', deleteLocation);
-app.post('/routes/delete',deleteRoutes);
 // Start server
 const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+
+mongoose
+  .connect(DB_PATH)
+  .then(() => {
+    console.log("Connected to MongoDB");
+    console.log(DB_PATH);
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+  });

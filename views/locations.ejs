@@ -30,9 +30,9 @@
       <ul class="locations-list">
         <% locations.forEach(loc => { %>
         <li class="location-item">
-          <span class="location-name"><%= loc %></span>
+          <span class="location-name"><%= loc.name %></span>
           <form action="/locations/delete" method="POST" class="">
-            <input type="hidden" name="name" value="<%= loc %>" />
+            <input type="hidden" name="name" value="<%= loc.name %>" />
             <button type="submit" class="delete-button" title="Delete Location">
               <i class="fas fa-trash-alt"></i>
             </button>

@@ -12,7 +12,7 @@
     <a href="/">⬅️ Back to Home</a>
     <br />
 
-    <svg width="1000" height="600" style="border: 1px solid #ccc"></svg>
+    <svg width="1000" height="600" style="border: 1px solid #a61717"></svg>
     <button id="calculate-path" style="margin-top: 20px">
       Calculate Shortest Path
     </button>
@@ -22,8 +22,8 @@
 
     <script>
       const graphData = {
-        nodes: <%- JSON.stringify(locations.map(name => ({ id: name }))) %>,
-        links: <%- JSON.stringify(routes.map(r => ({ source: r.from, target: r.to, distance: r.distance }))) %>
+        nodes: <%- JSON.stringify(locations.map(loc => ({ id: loc.name }))) %>,
+        links: <%- JSON.stringify(routes.map(r => ({ source: r.from.name, target: r.to.name, distance: r.distance }))) %>
       };
 
       const svg = d3.select("svg"),
@@ -60,7 +60,7 @@
 
       // Nodes (circles)
       const node = container.append("g")
-        .attr("stroke", "#fff")
+        .attr("stroke", "#e74c3c")
         .attr("stroke-width", 1.5)
         .selectAll("circle")
         .data(graphData.nodes)
@@ -143,7 +143,7 @@
         .attr("text-anchor", "middle")
         .attr("dy", 4)
         .attr("font-size", 12)
-        .attr("fill", "#fff")
+        .attr("fill", "#e74c3")
         .text(d => d.id);
 
       // Edge labels (distances)

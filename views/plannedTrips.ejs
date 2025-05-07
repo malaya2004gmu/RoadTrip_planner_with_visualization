@@ -6,6 +6,10 @@
     <li class="trip-item">
       <strong>Route:</strong> <%= trip.path.join(' → ') %> <br />
       <strong>Distance:</strong> <%= trip.distance %> km
+      <form action="/plannedTrip/delete" method="POST">
+        <input type="hidden" name="id" value="<%= trip._id %>" hidden />
+      <button class="delete-button" href=>mark completed</button>
+    </form>
     </li>
     <%} }) %>
   </ul>
