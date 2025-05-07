@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
@@ -9,8 +10,8 @@ const locationRoutes = require("./routes/location_routes");
 const routeRoutes = require("./routes/route_routes");
 const generalRoutes = require("./routes/general_routes");
 
-const DB_PATH =
-  "mongodb+srv://malayasahu2004:Malaya@cluster1.5gsuy.mongodb.net/roadTripPlanner";
+const DB_PATH = process.env.DB_PATH;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
@@ -32,7 +33,6 @@ app.use(routeRoutes);
 app.use(generalRoutes);
 
 // Start server
-const PORT = 3000;
 
 mongoose
   .connect(DB_PATH)
