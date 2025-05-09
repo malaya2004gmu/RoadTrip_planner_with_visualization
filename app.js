@@ -20,6 +20,7 @@ app.use(
     secret: "road_trip_planner",
     resave: false,
     saveUninitialized: false,
+    cookie: { secure: false },
   })
 );
 app.set("view engine", "ejs");

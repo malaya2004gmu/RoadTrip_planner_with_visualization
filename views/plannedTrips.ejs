@@ -3,12 +3,12 @@
   <% if (plannedTrips && plannedTrips.length > 0) { %>
   <ul class="trip-list">
     <% plannedTrips.forEach(trip => { if(trip.distance <10000) {%>
-    <li class="trip-item">
+    <li class="trip-item location-name">
       <strong>Route:</strong> <%= trip.path.join(' → ') %> <br />
       <strong>Distance:</strong> <%= trip.distance %> km
       <form action="/plannedTrip/delete" method="POST">
         <input type="hidden" name="id" value="<%= trip._id %>" hidden />
-      <button class="delete-button" href=>mark completed</button>
+      <button class="completed-button" href=>mark completed</button>
     </form>
     </li>
     <%} }) %>

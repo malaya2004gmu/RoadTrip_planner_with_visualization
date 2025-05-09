@@ -1,10 +1,12 @@
 const location = require("../models/locations");
 const Route = require("../models/route_path");
 const plannedTrip = require("../models/plannedTrips");
-const locations = require("../models/locations");
+const User = require("../models/users");
+
 async function renderHomePage(req, res) {
+  const userId = req.session.userId;
   try {
-    const plannedTrips = await plannedTrip.find();
+    const plannedTrips = await plannedTrip.find({ userId });
     res.render("index", { plannedTrips, session: req.session });
   } catch (err) {
     console.error("Error rendering home page:", err);
@@ -14,9 +16,10 @@ async function renderHomePage(req, res) {
 
 async function renderLocationsPage(req, res) {
   try {
-    const locations = await location.find().select("name -_id");
+    const userId = req.session.userId;
+    const locations = await location.find({ userId });
     console.log("rendering location page..");
-    res.render("locations", { locations });
+    res.render("locations", { locations, err: null });
   } catch (err) {
     console.error("Error rendering locations page:", err);
     res.status(500).send("Internal Server Error in rendering locations page");
@@ -25,26 +28,29 @@ async function renderLocationsPage(req, res) {
 
 async function addLocation(req, res) {
   const { name } = req.body;
+  const userId = req.session.userId;
   try {
     if (name) {
-      const existingLocation = await location.findOne({ name });
-      if (!existingLocation) {
-        await location.create({ name });
-        console.log(`Added location: ${name}`);
-      }
+      await location.create({ name, userId });
+      console.log(`Added location: ${name}`);
     }
     res.redirect("/locations");
   } catch (err) {
+    if (err.code === 11000) {
+      console.error("Location already exists:", err.message);
+      return res.status(400).send("Location already exists");
+    }
     console.error("Error adding location:", err);
     res.status(500).send("Internal Server Error in adding location");
   }
 }
 
 async function deleteLocation(req, res) {
-  const { name } = req.body;
+  const { id } = req.body;
+  const userId = req.session.userId;
   try {
     // Find the location by name
-    const locationToDelete = await location.findOne({ name });
+    const locationToDelete = await location.findOne({ _id: id, userId });
 
     if (!locationToDelete) {
       console.error("Location not found");
@@ -65,10 +71,11 @@ async function deleteLocation(req, res) {
 
 async function renderRoutesPage(req, res) {
   try {
-    const locations = await location.find().select("name -_id");
-    const routes = await Route.find()
-      .populate("from", "name -_id")
-      .populate("to", "name -_id");
+    const userId = req.session.userId;
+    const locations = await location.find({ userId });
+    const routes = await Route.find({ userId })
+      .populate("from", "name _id")
+      .populate("to", "name _id");
 
     res.render("routes", { locations, routes });
   } catch (err) {
@@ -80,9 +87,10 @@ async function renderRoutesPage(req, res) {
 async function addRoute(req, res) {
   console.log("Adding route...");
   const { from, to, distance } = req.body;
+  const userId = req.session.userId;
   try {
-    const fromLocation = await location.findOne({ name: from });
-    const toLocation = await location.findOne({ name: to });
+    const fromLocation = await location.findOne({ _id: from, userId });
+    const toLocation = await location.findOne({ _id: to, userId });
 
     if (!fromLocation || !toLocation) {
       console.error("Invalid locations");
@@ -91,8 +99,8 @@ async function addRoute(req, res) {
 
     const routeExists = await Route.findOne({
       $or: [
-        { from: fromLocation._id, to: toLocation._id },
-        { from: toLocation._id, to: fromLocation._id }, // Check for reverse route
+        { from: fromLocation._id, to: toLocation._id, userId },
+        { from: toLocation._id, to: fromLocation._id, userId }, // Check for reverse route
       ],
     });
 
@@ -108,6 +116,7 @@ async function addRoute(req, res) {
       from: fromLocation._id,
       to: toLocation._id,
       distance: parseFloat(distance),
+      userId,
     });
 
     res.redirect("/routes");
@@ -119,16 +128,21 @@ async function addRoute(req, res) {
 
 async function deleteRoutes(req, res) {
   const { from, to } = req.body;
+  const userId = req.session.userId;
   try {
-    const fromLocation = await location.findOne({ name: from });
-    const toLocation = await location.findOne({ name: to });
+    const fromLocation = await location.findOne({ _id: from, userId });
+    const toLocation = await location.findOne({ _id: to, userId });
 
     if (!fromLocation || !toLocation) {
       console.error("Invalid locations for deletion");
       return res.redirect("/routes");
     }
 
-    await Route.deleteOne({ from: fromLocation._id, to: toLocation._id });
+    await Route.deleteOne({
+      from: fromLocation._id,
+      to: toLocation._id,
+      userId,
+    });
     res.redirect("/routes");
   } catch (err) {
     console.error("Error deleting route:", err);
@@ -138,7 +152,8 @@ async function deleteRoutes(req, res) {
 
 async function renderTripPage(req, res) {
   try {
-    const locations = await location.find();
+    const userId = req.session.userId;
+    const locations = await location.find({ userId }).select("name _id");
     res.render("trip", { locations, result: null });
   } catch (err) {
     console.error("Error rendering trip page:", err);
@@ -148,9 +163,10 @@ async function renderTripPage(req, res) {
 
 async function planTrip(req, res) {
   const { start, end, roundTrip } = req.body;
+  const userId = req.session.userId;
   try {
-    const locations = await location.find().select("name -_id");
-    const routes = await Route.find()
+    const locations = await location.find({ userId }).select("name -_id");
+    const routes = await Route.find({ userId })
       .populate("from", "name -_id")
       .populate("to", "name -_id");
 
@@ -174,6 +190,7 @@ async function planTrip(req, res) {
       distance: result.distance,
       path: result.path,
       roundTrip: !!roundTrip,
+      userId,
     });
 
     res.render("trip", { locations, result });
@@ -256,8 +273,9 @@ function dijkstra(start, end, locations, routes) {
 
 async function renderMapPage(req, res) {
   try {
-    const locations = await location.find().select("name -_id");
-    const routes = await Route.find()
+    const userId = req.session.userId;
+    const locations = await location.find({ userId }).select("name -_id");
+    const routes = await Route.find({ userId })
       .populate("from", "name -_id")
       .populate("to", "name -_id");
 
@@ -271,14 +289,15 @@ async function renderMapPage(req, res) {
 async function calculateShortestPath(req, res) {
   const start = req.query.start;
   const end = req.query.end;
+  const userId = req.session.userId;
   try {
     if (!start || !end) {
       return res.status(400).json({ error: "Start and end are required" });
     }
-    const locations = await location.find().select("name -_id");
-    const routes = await Route.find()
-      .populate("from", "name -_id")
-      .populate("to", "name -_id");
+    const locations = await location.find({ userId }); //.select("name -_id");
+    const routes = await Route.find({ userId })
+      .populate("from", "name _id")
+      .populate("to", "name _id");
     const result = dijkstra(
       start,
       end,

@@ -19,7 +19,7 @@
           <label for="from-select" class="">From</label>
           <select name="from" id="from-select" required class="dropdown">
             <% locations.forEach(loc => { %>
-            <option value="<%= loc.name %>"><%= loc.name %></option>
+            <option value="<%= loc._id%>"><%= loc.name %></option>
             <% }) %>
           </select>
         </div>
@@ -28,7 +28,7 @@
           <label for="to-select" class="">To</label>
           <select name="to" id="to-select" required class="dropdown">
             <% locations.forEach(loc => { %>
-            <option value="<%= loc.name %>"><%= loc.name %></option>
+            <option value="<%= loc._id %>"><%= loc.name %></option>
             <% }) %>
           </select>
         </div>
@@ -50,12 +50,12 @@
 
       <ul class="locations-list">
         <% routes.forEach(route => { %>
-        <li class="location-item">
+        <li class="location-item location-name">
           <%= route.from.name%> ↔ <%= route.to.name %> : <%= route.distance %>
           km
           <form action="routes/delete" method="POST">
-            <input type="hidden" name="from" value="<%= route.from.name%>" />
-            <input type="hidden" name="to" value="<%= route.to.name%>" />
+            <input type="hidden" name="from" value="<%= route.from._id%>" />
+            <input type="hidden" name="to" value="<%= route.to._id%>" />
             <input
               type="hidden"
               name="distance"
@@ -75,3 +75,4 @@
     </div>
   </body>
 </html>
+<%- include('../partials/footer')%>

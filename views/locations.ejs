@@ -32,7 +32,7 @@
         <li class="location-item">
           <span class="location-name"><%= loc.name %></span>
           <form action="/locations/delete" method="POST" class="">
-            <input type="hidden" name="name" value="<%= loc.name %>" />
+            <input type="hidden" name="id" value="<%= loc._id %>" />
             <button type="submit" class="delete-button" title="Delete Location">
               <i class="fas fa-trash-alt"></i>
             </button>
@@ -48,3 +48,4 @@
     </div>
   </body>
 </html>
+<%- include('../partials/footer')%>

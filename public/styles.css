@@ -7,6 +7,12 @@ body {
   padding: 0;
   text-align: center;
 }
+html{
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column
+}
 
 h1 {
   background-color: #4CAF50;
@@ -278,4 +284,45 @@ a:hover {
 
 .delete-form {
   margin: 0;
+}
+.completed-button{
+  display: flex;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+.footer {
+  
+  margin-top: 50px;
+  background-color: #f8f9fa;
+  text-align: center;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+  font-size: 14px;
+  color: #555;
+}
+
+.footer a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+.map-link{
+  background-color: #36cbae;
+  color: rgb(191, 33, 33);
+  padding: 10px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
 }
