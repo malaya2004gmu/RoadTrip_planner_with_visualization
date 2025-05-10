@@ -9,10 +9,12 @@
   <body>
     <h1>Road Trip Planner</h1>
     <% if (session.user) { %>
-    <p>Welcome, <%= session.user.username %>! <a href="/logout">Logout</a></p>
+    <p class="welcome-name">
+      Welcome, <%= session.user.username %>! <a href="/logout">Logout</a>
+    </p>
     <% } else { %>
-    <p><a href="/login">Login</a> to use the planner.</p>
-    <% } %>
+    <p class="welcome-name"><a href="/login">Login</a> to use the planner.</p>
+    <% } %> <%- include('../partials/sidebar')%>
     <div class="card-container">
       <div class="index-card">
         <a href="/locations">Add/View Locations</a>
@@ -21,7 +23,7 @@
         <a href="/routes">Add/View Routes</a>
       </div>
       <div class="index-card">
-        <a href="/plan-trip">Plan a Trip</a>
+        <a href="/plan-trip" title="View the map">Plan a Trip</a>
       </div>
     </div>
     <%- include('plannedTrips', { plannedTrips: plannedTrips }) %>

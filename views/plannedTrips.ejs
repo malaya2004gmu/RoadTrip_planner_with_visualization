@@ -8,8 +8,10 @@
       <strong>Distance:</strong> <%= trip.distance %> km
       <form action="/plannedTrip/delete" method="POST">
         <input type="hidden" name="id" value="<%= trip._id %>" hidden />
-      <button class="completed-button" href=>mark completed</button>
-    </form>
+        <button class="completed-button" title="mark as completed">
+          mark completed
+        </button>
+      </form>
     </li>
     <%} }) %>
   </ul>

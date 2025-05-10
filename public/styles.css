@@ -326,3 +326,32 @@ a:hover {
   font-size: 16px;
   transition: background-color 0.3s;
 }
+
+.sidebar{
+  position: fixed;
+  top: 20%;
+  left: 0px;
+  width: 120px;
+  height: 35px;
+  background-color: #5bce61;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  z-index: 1000;
+  border-top-right-radius: 25px; 
+  border-bottom-right-radius: 25px;
+}
+.sidebar-link{
+  display: block;
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+.welcome-name{
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
